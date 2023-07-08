@@ -1,0 +1,19 @@
+//----Fonts----
+@import url('https://fonts.googleapis.com/css2?family=Tinos:wght@400;700&display=swap');
+
+//----General styles----
+body {
+  font-family: 'Tinos', serif;
+  font-weight: 400;
+  font-size: 24px;
+  background-color: #f9f9f9;
+}
+
+.container {
+  max-width: 1200px;
+}
+
+.logo {
+  font-size: 48px;
+  font-weight: 700;
+}
