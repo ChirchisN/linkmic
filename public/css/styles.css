@@ -15,4 +15,9 @@ body {
   font-weight: 700;
 }
 
+.error_text {
+  color: red;
+  font-size: 18px;
+}
+
 /*# sourceMappingURL=styles.css.map */

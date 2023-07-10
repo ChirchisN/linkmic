@@ -11,7 +11,7 @@
 <body>
 <header class="container text-center my-5">
     <a href="{{route("registration")}}">Registration</a>
-    <a class="mx-5" href="#">Login</a>
+    <a class="mx-5" href="{{route("login")}}">Login</a>
 </header>
 </body>
 </html>

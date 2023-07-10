@@ -45,4 +45,36 @@ class AuthController extends Controller
         ], 200);
     }
 
+    public function showLogin()
+    {
+        return view('login');
+    }
+
+    public function login(Request $request)
+    {
+        $credentials = [
+            'login' => $request->login,
+            'password' => $request->password
+        ];
+
+        $validator = Validator::make($credentials, [
+            'login' => ['required'],
+            'password' => ['required']
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
+            return response()->json([
+                'firstName' => $user->first_name,
+                'lastName' => $user->last_name
+            ]);
+        } else {
+            return response()->json(['message' => ['Invalid credentials!']], 401);
+        }
+    }
 }

@@ -22,10 +22,12 @@
 
                                 <form id="registrationForm" class="mx-1 mx-md-4" method="post">
                                     @csrf
+                                    <div id="generalErrors" class="error_text"></div>
                                     <div class="d-flex flex-row align-items-center mb-3">
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
                                             <input type="text" id="firstName" name="firstName" class="form-control"/>
+                                            <div id="firstNameError" class="error_text"></div>
                                             <label class="form-label" for="form3Example1c">First Name</label>
                                         </div>
                                     </div>
@@ -34,6 +36,7 @@
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
                                             <input type="text" id="lastName" name="lastName" class="form-control"/>
+                                            <div id="lastNameError" class="error_text"></div>
                                             <label class="form-label" for="form3Example1c">Last Name</label>
                                         </div>
                                     </div>
@@ -41,7 +44,8 @@
                                     <div class="d-flex flex-row align-items-center mb-3">
                                         <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
-                                            <input type="email" id="login" name="login" class="form-control"/>
+                                            <input type="login" id="login" name="login" class="form-control"/>
+                                            <div id="loginError" class="error_text"></div>
                                             <label class="form-label" for="form3Example3c">Login</label>
                                         </div>
                                     </div>
@@ -50,6 +54,7 @@
                                         <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
                                             <input type="password" id="password" name="password" class="form-control"/>
+                                            <div id="passwordError" class="error_text"></div>
                                             <label class="form-label" for="form3Example4c">Password</label>
                                         </div>
                                     </div>
@@ -60,6 +65,7 @@
                                             <input type="password" id="passwordConfirmation"
                                                    name="password_confirmation"
                                                    class="form-control"/>
+                                            <div id="password_confirmationError" class="error_text"></div>
                                             <label class="form-label" for="form3Example4cd">Repeat your password</label>
                                         </div>
                                     </div>
@@ -79,10 +85,10 @@
                                 <div class="mb-5">
                                     <span>Go to the</span>
                                     <a class="text-decoration-none text-black link-primary fw-bold"
-                                       href="#">Home Page</a>
+                                       href="{{route('home')}}">Home Page</a>
                                     <span>or</span>
                                     <a class="text-decoration-none text-black link-primary fw-bold"
-                                       href="#">Sign in</a>
+                                       href="{{route('login')}}">Sign in</a>
                                 </div>
                                 <div>
                                     <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
@@ -102,52 +108,47 @@
         crossorigin="anonymous">
 </script>
 
+<script src="{{asset('/js/script.js')}}"></script>
+
 <script>
-    let firstNameInput = document.getElementById('firstName');
-    let lastNameInput = document.getElementById('lastName');
-    let loginInput = document.getElementById('login');
-    let passwordInput = document.getElementById('password');
-    let passwordConfirmationInput = document.getElementById('passwordConfirmation');
-    let registerButton = document.getElementById('register');
-    let tokenInput = document.querySelector('input[name="_token"]');
+    document.getElementById('register').addEventListener('click', function () {
 
-    registerButton.addEventListener('click', function () {
+            let xhr = new XMLHttpRequest();
 
-        let xhr = new XMLHttpRequest();
+            xhr.open('POST', '/registration');
 
-        xhr.open('POST', '/registration');
+            xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('input[name="_token"]').value);
+            xhr.setRequestHeader("content-type", "application/json");
 
-        xhr.setRequestHeader('X-CSRF-TOKEN', tokenInput.value);
-        xhr.setRequestHeader("content-type", "application/json");
+            let data = JSON.stringify({
+                'firstName': document.getElementById('firstName').value,
+                'lastName': document.getElementById('lastName').value,
+                'login': document.getElementById('login').value,
+                'password': document.getElementById('password').value,
+                'password_confirmation': document.getElementById('passwordConfirmation').value
+            });
 
-        let data = JSON.stringify({
-            'firstName': firstNameInput.value,
-            'lastName': lastNameInput.value,
-            'login': loginInput.value,
-            'password': passwordInput.value,
-            'password_confirmation': passwordConfirmationInput.value
-        });
+            xhr.send(data);
 
-        xhr.send(data);
-
-        xhr.onload = function () {
-            let response = JSON.parse(xhr.response);
-            if (xhr.status >= 200 && xhr.status < 300) {
-                window.location.href = '/';
-            } else if (xhr.status === 400) {
-                alert((response['firstName'] ? response['firstName'] + '\n' : '') +
-                    (response['lastName'] ? response['lastName'] + '\n' : '') +
-                    (response['login'] ? response['login'] + '\n' : '') +
-                    (response['password'] ? response['password'] + '\n' : '') +
-                    (response['passwordConfirmation'] ? response['passwordConfirmation'] + '\n' : ''));
-            } else {
-                alert('Something went wrong...');
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    window.location.href = '/';
+                } else {
+                    cleanErrors();
+                    if (xhr.status === 400) {
+                        let response = JSON.parse(xhr.response);
+                        showErrors(response, 'firstName');
+                        showErrors(response, 'lastName');
+                        showErrors(response, 'login');
+                        showErrors(response, 'password');
+                        showErrors(response, 'password_confirmation');
+                    } else {
+                        document.getElementById('generalErrors').innerText = "Something went wrong! Please try again!";
+                    }
+                }
             }
-        };
-    });
-
+        }
+    );
 </script>
-
 </body>
 </html>
-
