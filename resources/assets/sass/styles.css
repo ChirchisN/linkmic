@@ -1,10 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Tinos:wght@400;700&display=swap");
-
 body {
   font-family: "Tinos", serif;
   font-weight: 400;
   font-size: 24px;
   background-color: #f9f9f9;
+  box-sizing: border-box;
 }
 
 .container {
@@ -12,13 +12,69 @@ body {
 }
 
 .logo {
+  color: #0186da;
   font-size: 48px;
   font-weight: 700;
+}
+
+a.logo {
+  font-size: 48px;
+  font-weight: 700;
+}
+
+a.logo:hover {
+  color: #007dda;
+}
+
+.button {
+  background-color: #0186da;
+  font-size: 24px;
+}
+
+.display_none {
+  display: none;
 }
 
 .error_text {
   color: red;
   font-size: 18px;
+}
+
+nav {
+  padding-right: 25px;
+  border-bottom: 1px solid #b6b6b6;
+}
+nav a {
+  color: #0186da;
+  font-size: 24px;
+  margin-left: 25px;
+}
+nav .menu a:hover {
+  color: #4a5568;
+}
+
+.convert_link input {
+  width: 600px;
+  height: 55px;
+  padding: 10px 16px;
+  border: 1px solid #b6b6b6;
+  font-size: 24px;
+}
+.convert_link input::placeholder {
+  font-size: 24px;
+  opacity: 0.7;
+}
+.convert_link .short_link {
+  display: none;
+  padding: 5px 20px;
+  font-size: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+.convert_link .copy_btn {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
 }
 
 /*# sourceMappingURL=styles.css.map */

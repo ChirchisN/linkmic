@@ -66,15 +66,15 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 400);
         }
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-
-            return response()->json([
-                'firstName' => $user->first_name,
-                'lastName' => $user->last_name
-            ]);
-        } else {
+        if (!Auth::attempt($credentials)) {
             return response()->json(['message' => ['Invalid credentials!']], 401);
         }
+
+        $user = Auth::user();
+
+        return response()->json([
+            'firstName' => $user->first_name,
+            'lastName' => $user->last_name
+        ]);
     }
 }

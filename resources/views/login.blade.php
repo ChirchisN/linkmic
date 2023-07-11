@@ -6,7 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="stylesheet" href={{asset('css/styles.css')}}>
-    <title>Short URL</title>
+    <title>LinkMic - login</title>
 </head>
 <body>
 <section>
@@ -42,7 +42,8 @@
                                     </div>
 
                                     <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                                        <button type="button" id="loginButton" class="btn btn-primary btn-lg">Sign in
+                                        <button type="button" id="loginButton" class="btn btn-primary btn-lg button">
+                                            Sign in
                                         </button>
                                     </div>
                                 </form>
@@ -50,7 +51,7 @@
 
                             <div class="col-md-10 col-lg-6 col-xl-7 d-flex flex-column justify-content-center align-items-center order-1 order-lg-2">
                                 <div class="mb-3">
-                                    <a class="logo text-decoration-none" href="{{route('home')}}">Short URL</a>
+                                    <a class="logo text-decoration-none" href="{{route('home')}}">LinkMic</a>
                                 </div>
                                 <div class="mb-5">
                                     <span>Go to the</span>
@@ -91,7 +92,7 @@
         xhr.open('POST', '/login');
 
         xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('input[name="_token"]').value);
-        xhr.setRequestHeader("content-type", "application/json");
+        xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
 
         let data = JSON.stringify({
             'login': document.getElementById('login').value,
@@ -101,21 +102,18 @@
         xhr.send(data);
 
         xhr.onload = function () {
+            cleanErrors();
             if (xhr.status >= 200 && xhr.status < 300) {
                 window.location.href = '/';
+            } else if (xhr.status === 400) {
+                let response = JSON.parse(xhr.response);
+                showErrors(response, 'login');
+                showErrors(response, 'password');
+            } else if (xhr.status === 401) {
+                let response = JSON.parse(xhr.response);
+                showGeneralErrors(response['message']);
             } else {
-                cleanErrors();
-
-                if (xhr.status === 400) {
-                    let response = JSON.parse(xhr.response);
-                    showErrors(response, 'login');
-                    showErrors(response, 'password');
-                } else if (xhr.status === 401) {
-                    let response = JSON.parse(xhr.response);
-                    showGeneralErrors(response['message']);
-                } else {
-                    showGeneralErrors("Something went wrong! Please try again!");
-                }
+                showGeneralErrors("Something went wrong! Please try again!");
             }
         }
     });

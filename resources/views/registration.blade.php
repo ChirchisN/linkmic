@@ -71,7 +71,8 @@
                                     </div>
 
                                     <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                                        <button type="button" id="register" class="btn btn-primary btn-lg">Register
+                                        <button type="button" id="register" class="btn btn-primary btn-lg button">
+                                            Register
                                         </button>
                                     </div>
 
@@ -80,7 +81,7 @@
                             </div>
                             <div class="col-md-10 col-lg-6 col-xl-7 d-flex flex-column justify-content-center align-items-center order-1 order-lg-2">
                                 <div>
-                                    <a class="logo text-decoration-none" href="#">LinkMic</a>
+                                    <a class="logo text-decoration-none" href="{{route('home')}}">LinkMic</a>
                                 </div>
                                 <div class="mb-5">
                                     <span>Go to the</span>
@@ -113,42 +114,39 @@
 <script>
     document.getElementById('register').addEventListener('click', function () {
 
-            let xhr = new XMLHttpRequest();
+        let xhr = new XMLHttpRequest();
 
-            xhr.open('POST', '/registration');
+        xhr.open('POST', '/registration');
 
-            xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('input[name="_token"]').value);
-            xhr.setRequestHeader("content-type", "application/json");
+        xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('input[name="_token"]').value);
+        xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
 
-            let data = JSON.stringify({
-                'firstName': document.getElementById('firstName').value,
-                'lastName': document.getElementById('lastName').value,
-                'login': document.getElementById('login').value,
-                'password': document.getElementById('password').value,
-                'password_confirmation': document.getElementById('passwordConfirmation').value
-            });
+        let data = JSON.stringify({
+            'firstName': document.getElementById('firstName').value,
+            'lastName': document.getElementById('lastName').value,
+            'login': document.getElementById('login').value,
+            'password': document.getElementById('password').value,
+            'password_confirmation': document.getElementById('passwordConfirmation').value
+        });
 
-            xhr.send(data);
+        xhr.send(data);
 
-            xhr.onload = function () {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    window.location.href = '/';
-                } else {
-                    cleanErrors();
-                    if (xhr.status === 400) {
-                        let response = JSON.parse(xhr.response);
-                        showErrors(response, 'firstName');
-                        showErrors(response, 'lastName');
-                        showErrors(response, 'login');
-                        showErrors(response, 'password');
-                        showErrors(response, 'password_confirmation');
-                    } else {
-                        document.getElementById('generalErrors').innerText = "Something went wrong! Please try again!";
-                    }
-                }
+        xhr.onload = function () {
+            cleanErrors();
+            if (xhr.status >= 200 && xhr.status < 300) {
+                window.location.href = '/';
+            } else if (xhr.status === 400) {
+                let response = JSON.parse(xhr.response);
+                showErrors(response, 'firstName');
+                showErrors(response, 'lastName');
+                showErrors(response, 'login');
+                showErrors(response, 'password');
+                showErrors(response, 'password_confirmation');
+            } else {
+                document.getElementById('generalErrors').innerText = "Something went wrong! Please try again!";
             }
         }
-    );
+    });
 </script>
 </body>
 </html>
