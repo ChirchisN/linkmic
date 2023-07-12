@@ -35,4 +35,17 @@ class LinkController extends Controller
 
         return response()->json(['link' => url(route('home')) . '/lm/' . $shortCode], 200);
     }
+
+    public function redirect($shortCode)
+    {
+        $link = Link::where('short_code', $shortCode)->first();
+
+        if (empty($link)) {
+            abort(404);
+        }
+
+        $link->redirected_count += 1;
+        $link->save();
+        return redirect($link->original_link);
+    }
 }

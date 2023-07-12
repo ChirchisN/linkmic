@@ -20,3 +20,4 @@ Route::get('/login', [\App\Http\Controllers\AuthController::class, 'showLogin'])
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 Route::post('/link', [\App\Http\Controllers\LinkController::class, 'create'])->name('link');
 Route::get('/user', [\App\Http\Controllers\UserController::class, 'user'])->name('user');
+Route::get('/lm/{shortCode}', [\App\Http\Controllers\LinkController::class, 'redirect']);
