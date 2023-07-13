@@ -12,8 +12,7 @@ class LinkController extends Controller
     public function create(Request $request)
     {
         if (!Auth::check()) {
-            return response()->json(['message' => 'User is not logged'],
-                401);
+            return response()->json(['message' => 'User is not logged'], 401);
         }
 
         $validator = Validator::make($request->all(), [
@@ -27,13 +26,20 @@ class LinkController extends Controller
 
         $shortCode = empty($request['short_code']) ? uniqid() : $request['short_code'];
 
-        Link::create([
+        $link = Link::create([
             'user_id' => Auth::id(),
             'original_link' => $request['link'],
             'short_code' => $shortCode
         ]);
 
-        return response()->json(['link' => url(route('home')) . '/lm/' . $shortCode], 200);
+        $adjustedLink = [
+            'id' => $link['id'],
+            'original_link' => $link['original_link'],
+            'short_link' => url(route('home')) . '/lm/' . $link['short_code'],
+            'redirected_count' => $link['redirected_count']
+        ];
+
+        return response()->json($adjustedLink, 200);
     }
 
     public function redirect($shortCode)
@@ -47,5 +53,42 @@ class LinkController extends Controller
         $link->redirected_count += 1;
         $link->save();
         return redirect($link->original_link);
+    }
+
+    public function getLinks()
+    {
+        if (!Auth::check()) {
+            return response()->json(['message' => 'User is not logged'], 401);
+        }
+
+        $userRole = Auth::getUser()->role;
+        $userId = Auth::getUser()->id;
+
+        $conditions = [];
+
+        if ($userRole != 'ADMIN') {
+            $conditions['user_id'] = $userId;
+        }
+
+        $links = Link::where($conditions)->orderBy('id', 'desc')->get();
+
+        $adjustedLinks = $this->adjustLinks($links);
+
+        return response()->json($adjustedLinks);
+    }
+
+    private function adjustLinks($links)
+    {
+        $adjustedLinks = [];
+        foreach ($links as $link) {
+            $adjustedLinks[] = [
+                'id' => $link['id'],
+                'original_link' => $link['original_link'],
+                'short_link' => url(route('home')) . '/lm/' . $link['short_code'],
+                'redirected_count' => $link['redirected_count']
+            ];
+        }
+
+        return $adjustedLinks;
     }
 }

@@ -31,6 +31,10 @@ a.logo:hover {
   font-size: 24px;
 }
 
+.display_none {
+  display: none;
+}
+
 .error_text {
   color: red;
   font-size: 18px;
@@ -71,7 +75,11 @@ nav .menu a:hover {
 .convert_link .copy_btn {
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
-  display: none;
+}
+
+.link {
+  background-color: white;
+  padding: 20px;
 }
 
 /*# sourceMappingURL=styles.css.map */

@@ -44,6 +44,12 @@
     </section>
 </div>
 
+<section class="container" id="containerLinks" style="display: none">
+    <hr>
+    <h2 class="fw-bold">Your Links</h2>
+    <div id="links"></div>
+</section>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous">
@@ -57,8 +63,13 @@
     let customLinkInput = document.getElementById('customLink');
     let createdShortLinkDiv = document.getElementById('createdShortLink');
     let copyButton = document.getElementById('copy');
+    let linksDiv = document.getElementById('links');
 
     loadCurrentUserDetails();
+
+    copyButton.addEventListener('click', function () {
+        navigator.clipboard.writeText(createdShortLinkDiv.innerText);
+    });
 
     document.getElementById('linkBtn').addEventListener('click', function () {
         let xhr = new XMLHttpRequest();
@@ -79,15 +90,16 @@
             cleanErrors();
             if (xhr.status === 200) {
                 let response = JSON.parse(xhr.response);
-                linkInput.value = '';
-                customLinkInput.value = '';
                 createdShortLinkDiv.style.display = 'inline-block';
-                createdShortLinkDiv.innerText = response['link'];
+                createdShortLinkDiv.innerText = response['short_link'];
                 copyButton.style.display = 'inline';
 
-                copyButton.addEventListener('click', function () {
-                    navigator.clipboard.writeText(response['link']);
-                });
+                linksDiv.innerHTML = '<div class="d-flex flex-column mb-3 justify-content-between">' +
+                    '<div class="me-3">Original URL: <span id="originalLink" class="fst-italic">' + response['original_link'] + '</span></div>' +
+                    '<div class="me-3">Short URL: <span id="shortLink" class="fst-italic">' + response['short_link'] + '</span></div>' +
+                    '<div class="me-3">Redirected number: <span id="count" class="fst-italic">' + 0 + '</span></div>' +
+                    '</div>' + linksDiv.innerHTML;
+
             } else if (xhr.status === 400) {
                 let response = JSON.parse(xhr.response);
                 showErrors(response, 'link');

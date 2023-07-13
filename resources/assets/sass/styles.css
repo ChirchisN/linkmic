@@ -77,4 +77,9 @@ nav .menu a:hover {
   border-bottom-left-radius: 0 !important;
 }
 
+.link {
+  background-color: white;
+  padding: 20px;
+}
+
 /*# sourceMappingURL=styles.css.map */
