@@ -22,3 +22,7 @@ Route::post('/link', [\App\Http\Controllers\LinkController::class, 'create'])->n
 Route::get('/user', [\App\Http\Controllers\UserController::class, 'user'])->name('user');
 Route::get('/lm/{shortCode}', [\App\Http\Controllers\LinkController::class, 'redirect']);
 Route::get('/links',[\App\Http\Controllers\LinkController::class, 'getLinks']);
+Route::get('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+Route::fallback(function () {
+    abort(404);
+});

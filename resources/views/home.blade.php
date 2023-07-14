@@ -94,7 +94,7 @@
                 createdShortLinkDiv.innerText = response['short_link'];
                 copyButton.style.display = 'inline';
 
-                linksDiv.innerHTML = '<div class="d-flex flex-column mb-3 justify-content-between">' +
+                linksDiv.innerHTML = '<div class="d-flex flex-column mb-3 justify-content-between link">' +
                     '<div class="me-3">Original URL: <span id="originalLink" class="fst-italic">' + response['original_link'] + '</span></div>' +
                     '<div class="me-3">Short URL: <span id="shortLink" class="fst-italic">' + response['short_link'] + '</span></div>' +
                     '<div class="me-3">Redirected number: <span id="count" class="fst-italic">' + 0 + '</span></div>' +
@@ -109,6 +109,15 @@
             } else {
                 showGeneralErrors("Something went wrong! Please try again!");
             }
+        }
+    });
+
+    document.getElementById('logout').addEventListener('click', function () {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', '/logout');
+        xhr.send();
+        xhr.onload = function () {
+            window.location.href = '/';
         }
     });
 </script>

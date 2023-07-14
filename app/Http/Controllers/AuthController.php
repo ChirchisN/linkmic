@@ -77,4 +77,11 @@ class AuthController extends Controller
             'lastName' => $user->last_name
         ]);
     }
+
+    public function logout()
+    {
+        Auth::logout();
+
+        return response()->json(['message' => 'Successful logout!']);
+    }
 }
