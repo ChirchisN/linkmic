@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -9,13 +11,11 @@ class UserController extends Controller
     public function user()
     {
         if (!Auth::check()) {
-            return response()->json(['message' => "User is not logged!"], 401);
+            return response()->json(['message' => "User is not logged!"], Response::HTTP_UNAUTHORIZED);
         }
 
         $user = Auth::user();
-        return response()->json([
-            'firstName' => $user->first_name,
-            'lastName' => $user->last_name
-        ]);
+
+        return new UserResource($user);
     }
 }

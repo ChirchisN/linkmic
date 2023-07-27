@@ -6,6 +6,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href={{asset('css/styles.css')}}>
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>LinkMic</title>
 </head>
 <body>
@@ -58,7 +60,6 @@
 <script src="{{asset('/js/script.js')}}"></script>
 
 <script>
-
     let linkInput = document.getElementById('link');
     let customLinkInput = document.getElementById('customLink');
     let createdShortLinkDiv = document.getElementById('createdShortLink');
@@ -88,18 +89,13 @@
 
         xhr.onload = function () {
             cleanErrors();
-            if (xhr.status === 200) {
+            if (xhr.status === 201) {
                 let response = JSON.parse(xhr.response);
                 createdShortLinkDiv.style.display = 'inline-block';
-                createdShortLinkDiv.innerText = response['short_link'];
+                createdShortLinkDiv.innerText = response['data']['short_link'];
                 copyButton.style.display = 'inline';
 
-                linksDiv.innerHTML = '<div class="d-flex flex-column mb-3 justify-content-between link">' +
-                    '<div class="me-3">Original URL: <span id="originalLink" class="fst-italic">' + response['original_link'] + '</span></div>' +
-                    '<div class="me-3">Short URL: <span id="shortLink" class="fst-italic">' + response['short_link'] + '</span></div>' +
-                    '<div class="me-3">Redirected number: <span id="count" class="fst-italic">' + 0 + '</span></div>' +
-                    '</div>' + linksDiv.innerHTML;
-
+                linksDiv.innerHTML = showLink(response['data']['original_link'], response['data']['short_link'], 0, response['data']['id']) + linksDiv.innerHTML;
             } else if (xhr.status === 400) {
                 let response = JSON.parse(xhr.response);
                 showErrors(response, 'link');
@@ -120,6 +116,7 @@
             window.location.href = '/';
         }
     });
+
 </script>
 </body>
 </html>

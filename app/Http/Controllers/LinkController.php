@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\LinkResource;
 use App\Models\Link;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -12,7 +14,7 @@ class LinkController extends Controller
     public function create(Request $request)
     {
         if (!Auth::check()) {
-            return response()->json(['message' => 'User is not logged'], 401);
+            return response()->json(['message' => 'User is not logged'], Response::HTTP_UNAUTHORIZED);
         }
 
         $validator = Validator::make($request->all(), [
@@ -21,7 +23,7 @@ class LinkController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
         }
 
         $shortCode = empty($request['short_code']) ? uniqid() : $request['short_code'];
@@ -32,14 +34,7 @@ class LinkController extends Controller
             'short_code' => $shortCode
         ]);
 
-        $adjustedLink = [
-            'id' => $link['id'],
-            'original_link' => $link['original_link'],
-            'short_link' => url(route('home')) . '/lm/' . $link['short_code'],
-            'redirected_count' => $link['redirected_count']
-        ];
-
-        return response()->json($adjustedLink, 200);
+        return new LinkResource($link);
     }
 
     public function redirect($shortCode)
@@ -47,7 +42,7 @@ class LinkController extends Controller
         $link = Link::where('short_code', $shortCode)->first();
 
         if (empty($link)) {
-            abort(404);
+            abort(Response::HTTP_NOT_FOUND);
         }
 
         $link->redirected_count += 1;
@@ -58,7 +53,7 @@ class LinkController extends Controller
     public function getLinks()
     {
         if (!Auth::check()) {
-            return response()->json(['message' => 'User is not logged'], 401);
+            return response()->json(['message' => 'User is not logged'], Response::HTTP_UNAUTHORIZED);
         }
 
         $userRole = Auth::getUser()->role;
@@ -70,25 +65,19 @@ class LinkController extends Controller
             $conditions['user_id'] = $userId;
         }
 
-        $links = Link::where($conditions)->orderBy('id', 'desc')->get();
-
-        $adjustedLinks = $this->adjustLinks($links);
-
-        return response()->json($adjustedLinks);
+        return LinkResource::collection(Link::where($conditions)->orderBy('id', 'desc')->get());
     }
 
-    private function adjustLinks($links)
+    public function destroy($id)
     {
-        $adjustedLinks = [];
-        foreach ($links as $link) {
-            $adjustedLinks[] = [
-                'id' => $link['id'],
-                'original_link' => $link['original_link'],
-                'short_link' => url(route('home')) . '/lm/' . $link['short_code'],
-                'redirected_count' => $link['redirected_count']
-            ];
+        $link = Link::find($id);
+
+        if ($link == null) {
+            return response()->json(['message' => 'The link in not found!'], Response::HTTP_NOT_FOUND);
         }
 
-        return $adjustedLinks;
+        $link->delete();
+
+        return response()->json(['message' => 'The link is deleted'], Response::HTTP_OK);
     }
 }

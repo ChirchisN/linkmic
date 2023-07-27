@@ -23,6 +23,7 @@ Route::get('/user', [\App\Http\Controllers\UserController::class, 'user'])->name
 Route::get('/lm/{shortCode}', [\App\Http\Controllers\LinkController::class, 'redirect']);
 Route::get('/links',[\App\Http\Controllers\LinkController::class, 'getLinks']);
 Route::get('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+Route::delete('/links/{id}', [\App\Http\Controllers\LinkController::class, 'destroy']);
 Route::fallback(function () {
     abort(404);
 });

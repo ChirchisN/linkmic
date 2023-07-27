@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -26,7 +28,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
         }
 
         $user = User::create([
@@ -38,11 +40,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return response()->json([
-            'firstName' => $user->first_name,
-            'lastName' => $user->last_name,
-            'login' => $user->login
-        ], 200);
+        return new UserResource($user);
     }
 
     public function showLogin()
@@ -63,25 +61,20 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
         }
 
         if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => ['Invalid credentials!']], 401);
+            return response()->json(['message' => ['Invalid credentials!']], Response::HTTP_UNAUTHORIZED);
         }
 
-        $user = Auth::user();
-
-        return response()->json([
-            'firstName' => $user->first_name,
-            'lastName' => $user->last_name
-        ]);
+        return new UserResource(Auth::user());
     }
 
     public function logout()
     {
         Auth::logout();
 
-        return response()->json(['message' => 'Successful logout!']);
+        return response()->json(['message' => 'Successful logout!'], Response::HTTP_OK);
     }
 }

@@ -80,6 +80,11 @@ nav .menu a:hover {
 .link {
   background-color: white;
   padding: 20px;
+  font-size: 22px;
+}
+
+.link h3 {
+  color: #0186da;
 }
 
 /*# sourceMappingURL=styles.css.map */
